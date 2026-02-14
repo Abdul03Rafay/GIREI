@@ -22,9 +22,9 @@ app.add_middleware(
 
 # Configuration
 OLLAMA_LOCAL_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "deepseek-r1:7b"
+MODEL_NAME = "...."
 # TODO: In a real app, this should be an env var.
-OLLAMA_SEARCH_API_KEY = "120fc2f960c54c47b9e2f1cb11e0b12a.Phsrqbp6HS7to7HAWujBxTHw"
+OLLAMA_SEARCH_API_KEY = "...."
 SEARCH_URL = "https://ollama.com/api/web_search"
 
 from typing import List
