@@ -32,76 +32,16 @@
 
 <body>
     <div class="app-container">
-        <div id="settings-tab" class="settings-tab">
-            <div class="settings-content">
-                <div class="settings-header-row">
-                    <h2 class="settings-title">Settings</h2>
-                    <!-- Close button removed -->
-                </div>
-
-                <!-- Group 1: Model & Stats -->
-                <div class="settings-group">
-                    <div class="setting-row">
-                        <label>Current Model</label>
-                        <span id="settings-model-name" class="setting-value">Loading...</span>
-                    </div>
-                    <div class="setting-row">
-                        <label>System Stats</label>
-                        <small id="mem-stats" class="stats-text">Loading...</small>
-                    </div>
-                </div>
-
-                <!-- Group 2: Chat Preferences -->
-                <h3 class="group-header">Preferences</h3>
-                <div class="settings-group">
-                    <!-- Web Search -->
-                    <div class="setting-row">
-                        <label>Web Search</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="web-search-toggle">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-
-                    <!-- Menu Bar -->
-                    <div class="setting-row">
-                        <label>Show in Menu Bar</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="menubar-toggle">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Group 4: Downloads -->
-                <h3 class="group-header">Available Models</h3>
-                <div class="settings-group no-padding">
-                    <div id="model-downloader" class="model-downloader">
-                        <!-- Injected list -->
-                    </div>
-                </div>
-                <div id="download-status" class="download-status hidden"></div>
-
-            </div>
-
-        </div>
         <header class="chat-header">
-            <div class="window-controls">
-                <button id="min-btn" class="control-btn" title="Minimize">—</button>
-                <button id="close-btn" class="control-btn" title="Close">×</button>
-            </div>
-            <div class="header-content">
-                <div class="model-selector-container">
-                    <h1 id="theme-toggle-text" class="model-name" title="Click to switch model">DeepSeek | R1</h1>
-                    <div id="model-dropdown" class="model-dropdown hidden">
-                        <!-- Models will be injected here -->
-                    </div>
+            <div class="model-selector-container">
+                <h1 id="theme-toggle-text" class="model-name" title="Click to switch model">DeepSeek | R1</h1>
+                <div id="model-dropdown" class="model-dropdown hidden">
+                    <!-- Models will be injected here -->
                 </div>
             </div>
         </header>
 
         <div class="chat-history" id="chat-history">
-            <!-- Messages will appear here -->
             <!-- Messages will appear here -->
         </div>
 

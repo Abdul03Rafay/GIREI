@@ -30,7 +30,8 @@ console.log("Renderer loaded. Elements found.");
                 minimize: () => ipcRenderer.send('minimize-window'),
                 close: () => ipcRenderer.send('close-window'),
                 saveHistory: (history) => ipcRenderer.invoke('save-history', history),
-                loadHistory: () => ipcRenderer.invoke('load-history')
+                loadHistory: () => ipcRenderer.invoke('load-history'),
+                getHistoryPath: () => ipcRenderer.invoke('get-history-path')
             };
 
             const _marked = require('marked');
@@ -236,7 +237,6 @@ async function sendMessage() {
             body: JSON.stringify({
                 messages: conversationHistory,
                 model: modelToUse,
-                web_search: useWebSearch,
                 temperature: temperature,
                 system_prompt: systemPrompt
             })
@@ -335,16 +335,8 @@ messageInput.addEventListener('keydown', (e) => {
 window.addEventListener('DOMContentLoaded', async () => {
     // addMessage("Hey, Rafay what can I help you with?", 'ai');
 
-    // Window Controls
-    const minBtn = document.getElementById('min-btn');
-    const closeBtn = document.getElementById('close-btn');
+    // Window Controls REMOVED
 
-    if (minBtn && window.electronAPI) {
-        minBtn.onclick = () => window.electronAPI.minimize();
-    }
-    if (closeBtn && window.electronAPI) {
-        closeBtn.onclick = () => window.electronAPI.close();
-    }
 
     // Model Management
     const headerTitle = document.getElementById('theme-toggle-text');
@@ -353,7 +345,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     let availableModels = [];
 
     // Settings Tab Management
-    const settingsTab = document.getElementById('settings-tab');
+    // Settings Tab Removed
     const chatContainer = document.getElementById('chat-history');
 
     // LOAD HISTORY
@@ -442,253 +434,69 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Pull Down Settings Tab Logic (Overscroll)
-    let isSettingsOpen = false;
+    // Transparency Logic Removed
 
-    function openSettings() {
-        isSettingsOpen = true;
-        settingsTab.classList.add('visible');
-    }
-
-    function closeSettings() {
-        isSettingsOpen = false;
-        settingsTab.classList.remove('visible');
-    }
-
-    // Pull Down Logic & Scroll Up to Close
-    window.addEventListener('wheel', (e) => {
-        if (!isSettingsOpen) {
-            // Pull Down to Open (at top)
-            if (chatContainer && chatContainer.scrollTop === 0 && e.deltaY < -40) {
-                openSettings();
-            }
-        } else {
-            // Push Up to Close (scrolling down logically pushes content up?)
-            // If we are just scrolling normally on the page (deltaY > 0)
-            // and NOT hovering the settings content (which has its own scroll)
-            // Let's rely on the Close Button and Click Outside for now to be safe.
-            // But user asked for "scroll back up and closed".
-            // If they mean "Reverse the pull down gesture":
-            // Pull Down (deltaY < 0) -> Open.
-            // "Scroll Back Up" -> deltaY > 0?
-            // Let's implement deltaY > 30 closes it if we are at top.
-            if (settingsTab.scrollTop === 0 && e.deltaY > 20) {
-                closeSettings();
-            }
-        }
-    });
-
-    // Close Button Removed per user request
-    // if (closeSettingsBtn) ... removed
-
-    // Close when clicking outside specific elements
-    document.addEventListener('click', (e) => {
-        // If settings are open, and we click OUTSIDE the settings-content (the white box)
-        if (isSettingsOpen) {
-            const content = settingsTab.querySelector('.settings-content');
-            if (content && !content.contains(e.target) && !e.target.closest('#theme-toggle-text')) {
-                closeSettings();
-            }
-        }
-    });
-
-    // Load saved settings
-    const savedWebSearch = localStorage.getItem('webSearch') === 'true';
-    const savedMenuBar = localStorage.getItem('menuBar') === 'true';
-    const savedTemp = localStorage.getItem('temperature') || 0.7;
-    const savedPrompt = localStorage.getItem('systemPrompt') || '';
-
-    // Initialize UI
-    // Transparency Slider Removed
-
-    if (webSearchToggle) {
-        webSearchToggle.checked = savedWebSearch;
-        webSearchToggle.addEventListener('change', (e) => {
-            localStorage.setItem('webSearch', e.target.checked);
-        });
-    }
-
-    if (menubarToggle) {
-        menubarToggle.checked = savedMenuBar;
-        window.electronAPI && window.electronAPI.toggleTray(savedMenuBar); // Initial State
-
-        menubarToggle.addEventListener('change', (e) => {
-            const isChecked = e.target.checked;
-            localStorage.setItem('menuBar', isChecked);
-            if (window.electronAPI) {
-                window.electronAPI.toggleTray(isChecked);
-            }
-        });
-    }
-
-    function updateTransparency(val) {
-        // Map 0-100 slider to 0.1-0.9 opacity range (inverted or direct? "Transparency" slider usually means higher val = more transparent)
-        // Let's say 0 = opaque (alpha 1), 100 = transparent (alpha 0)
-        // But for background visibility, maybe "Opacity" is better. Let's assume "Transparency" label means:
-        // 0% -> Fully Visible (Normal)
-        // 100% -> Invisible
-
-        // Use css variable --bg-opacity if strictly using CSS, or update background color directly.
-        // Current CSS uses rgba(), let's try to update the --bg-color and --input-bg with new alpha.
-        // Easier: Set a CSS variable for the alpha channel.
-
-        // Calculating Alpha:
-        // 100% Transparency = 0 Alpha
-        // 0% Transparency = 1 Alpha (or whatever max was)
-
-        // Only adjusting background mostly.
-        // Let's interpret slider: 0 = Darkest/Most Opaque, 100 = Most Transparent
-
-        // Base Alpha for Dark Mode is roughly 0.8
-        const maxAlpha = 0.95;
-        const minAlpha = 0.1;
-
-        // val 0 -> maxAlpha
-        // val 100 -> minAlpha
-        const alpha = maxAlpha - ((val / 100) * (maxAlpha - minAlpha));
-
-        // We need to update CSS variables that use RGBA.
-        // This is tricky with pre-defined rgba colors.
-        // Alternative: Update the alpha of specific elements via JS.
-
-        document.documentElement.style.setProperty('--bg-alpha', alpha);
-
-        // We need to update CSS to use this variable.
-        // For now, let's inject a style rule or update specific props.
-        // Let's update the body background or .app-container
-
-        // Actually, styles.css uses hardcoded rgba.
-        // Let's override --dropdown-bg and --bubble-user etc if we want global transparency?
-        // User asked for "chat app window background".
-        // That is .settings-tab (which has bg) and .app-container (which is transparent).
-        // If app-container is transparent, the window itself determines.
-        // If we want to change window transparency, we might need Electron setOpacity, 
-        // OR we just change the background color of the body to be more/less opaque.
-
-        // Since main.js has transparent: true, the body background controls it.
-        // body background is transparent.
-        // .app-container is transparent.
-        // So the user sees desktop.
-        // To make it LESS transparent (more opaque), we add a background color.
-
-        // Let's set a background color on .app-container with dynamic alpha.
-        // Dark mode: Black, Light mode: White.
-
-        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const baseColor = isDark ? '0, 0, 0' : '255, 255, 255';
-
-        // Update a new variable
-        document.body.style.backgroundColor = `rgba(${baseColor}, ${alpha})`; // Actually body is usually transparent.
-        // Let's target .app-container
-        const appContainer = document.querySelector('.app-container');
-        if (appContainer) {
-            appContainer.style.backgroundColor = `rgba(${baseColor}, ${1 - alpha})`; // Wait, transparency slider...
-            // Slider 100 = Transparent -> Alpha 0
-            // Slider 0 = Opaque -> Alpha 1
-
-            // The slider value "20" (default) -> Mostly Opaque? Or mostly transparent?
-            // Usually "Transparency" 20% means 80% Opaque.
-
-            // Let's treat Value as "% Transparency".
-            // Alpha = 1 - (Value / 100).
-            // But we want to keep it "Glassy".
-            // Let's clamp it.
-
-            const calculatedAlpha = 1 - (val / 100);
-            appContainer.style.backgroundColor = `rgba(${baseColor}, ${Math.max(0.05, calculatedAlpha * 0.9)})`;
-        }
-    }
 
     function updateHeader() {
         if (headerTitle) {
             headerTitle.textContent = currentModel;
         }
-        if (settingsModelName) {
-            settingsModelName.textContent = currentModel;
-        }
         window.currentActiveModel = currentModel;
     }
 
-    // Model Downloader Logic
-    const popularModels = [
-        "deepseek-r1:1.5b", "deepseek-r1:7b", "deepseek-r1:8b", "deepseek-r1:14b",
-        "llama3.2", "mistral", "gemma:2b", "phi3", "tinyllama"
-    ];
+    // Duplicate chatContainer removed
 
-    const downloaderList = document.getElementById('model-downloader');
-    const downloadStatus = document.getElementById('download-status');
 
-    if (downloaderList) {
-        popularModels.forEach(m => {
-            const div = document.createElement('div');
-            div.className = 'download-item';
-            div.innerHTML = `<span>${m}</span> <small>Download</small>`;
-            div.onclick = () => pullModel(m);
-            downloaderList.appendChild(div);
-        });
+    // LOAD HISTORY
+    if (window.electronAPI) {
+        try {
+            const savedHistory = await window.electronAPI.loadHistory();
+            if (savedHistory && Array.isArray(savedHistory) && savedHistory.length > 0) {
+                conversationHistory = savedHistory;
+                // Re-render
+                conversationHistory.forEach(msg => {
+                    addMessage(msg.content, msg.role === 'assistant' ? 'ai' : msg.role);
+                });
+            } else {
+                addMessage("Hey, Rafay what can I help you with?", 'ai');
+            }
+        } catch (e) {
+            console.error("Failed to load history", e);
+            addMessage("Hey, Rafay what can I help you with?", 'ai');
+        }
+    } else {
+        addMessage("Hey, Rafay what can I help you with?", 'ai');
     }
 
-    async function pullModel(modelName) {
-        if (!downloadStatus) return;
-        downloadStatus.classList.remove('hidden');
-        downloadStatus.textContent = `Starting download for ${modelName}...`;
+    // FETCH MODELS ON STARTUP (Non-blocking)
+    fetchModels();
 
+    // Fetch models from Ollama
+    async function fetchModels() {
         try {
-            const response = await fetch('http://localhost:8000/pull', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: modelName })
-            });
+            const response = await fetch('http://localhost:11434/api/tags');
+            if (response.ok) {
+                const data = await response.json();
+                availableModels = data.models.map(m => m.name);
+                console.log("Available models:", availableModels);
 
-            if (!response.ok) throw new Error("Pull failed");
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                const chunk = decoder.decode(value, { stream: true });
-                const lines = chunk.split('\n').filter(l => l.trim());
-
-                for (const line of lines) {
-                    try {
-                        const data = JSON.parse(line);
-                        if (data.status) {
-                            let statusText = `Downloading ${modelName}: ${data.status}`;
-                            if (data.completed && data.total) {
-                                const pct = Math.round((data.completed / data.total) * 100);
-                                statusText += ` (${pct}%)`;
-                            }
-                            downloadStatus.textContent = statusText;
-                        }
-                    } catch (e) { }
+                // Ensure current model is in list or pick first
+                if (!availableModels.includes(currentModel) && availableModels.length > 0) {
+                    currentModel = availableModels[0];
                 }
+                updateHeader();
+                renderModelList();
             }
-            downloadStatus.textContent = `Successfully downloaded ${modelName}!`;
-            setTimeout(() => {
-                downloadStatus.classList.add('hidden');
-                fetchModels(); // Refresh list
-            }, 3000);
-
         } catch (e) {
-            downloadStatus.textContent = `Error: ${e.message}`;
+            console.error("Failed to fetch models:", e);
         }
     }
 
-    // Stats Updater
-    setInterval(async () => {
-        if (!settingsTab || !settingsTab.classList.contains('visible')) return; // Only update if visible
-        try {
-            const res = await fetch('http://localhost:8000/stats');
-            if (res.ok) {
-                const data = await res.json();
-                if (memStats) {
-                    memStats.textContent = `CPU: ${data.cpu_percent}% | RAM: ${data.system_memory_percent}% | Ollama: ${data.ollama_memory_mb}MB`;
-                }
-            }
-        } catch (e) { }
-    }, 2000); // Faster updates
+    // Model Downloader Logic Removed
+
+
+    // Stats Updater REMOVED
+
 
     // Blur Logic: Toggle class on chat-history and input-area when settings visible
     // We need to inject this into the scroll handler
@@ -723,5 +531,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (settingsTab) {
         observer.observe(settingsTab, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // Load History Path
+    if (window.electronAPI) {
+        window.electronAPI.getHistoryPath().then(path => {
+            const el = document.getElementById('history-path');
+            if (el) el.textContent = path;
+        }).catch(err => console.error("Failed to get history path", err));
     }
 });

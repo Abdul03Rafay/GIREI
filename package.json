@@ -15,7 +15,6 @@
     },
     "dependencies": {
         "dompurify": "^3.2.3",
-        "duck-duck-scrape": "^2.2.7",
         "highlight.js": "^11.11.0",
         "katex": "^0.16.11",
         "marked": "^15.0.4"

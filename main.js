@@ -266,6 +266,10 @@ ipcMain.on('close-window', () => {
     }
 });
 
+ipcMain.handle('get-history-path', () => {
+    return path.join(app.getPath('userData'), 'chat_history.json');
+});
+
 // History Persistence Handlers
 ipcMain.handle('save-history', async (event, history) => {
     try {

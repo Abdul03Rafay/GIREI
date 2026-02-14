@@ -22,10 +22,7 @@ app.add_middleware(
 
 # Configuration
 OLLAMA_LOCAL_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "...."
-# TODO: In a real app, this should be an env var.
-OLLAMA_SEARCH_API_KEY = "...."
-SEARCH_URL = "https://ollama.com/api/web_search"
+MODEL_NAME = "deepseek-r1:7b" #**change as needed
 
 from typing import List
 from fastapi.responses import StreamingResponse
@@ -38,7 +35,6 @@ class ChatRequest(BaseModel):
     model: Optional[str] = "deepseek-r1:7b"
     # history field is deprecated/replaced by messages
     file_paths: Optional[List[str]] = []
-    web_search: Optional[bool] = False
     temperature: Optional[float] = 0.7
     system_prompt: Optional[str] = None
 
@@ -102,56 +98,14 @@ async def chat_stream_generator(request: ChatRequest):
 Current Date: {TODAY}
 """
 
-    if request.web_search:
-        system_content += """
-If the user asks about current events, news, prices, or weather, output:
-SEARCH: <query>
-Example:
-User: "apple stock"
-Response: SEARCH: apple stock price today
-"""
-
     # Prepend System Message
     # Check if system message already exists? Usually client sends user/assistant.
     # We inject system message at 0.
     full_messages = [{"role": "system", "content": system_content}] + input_messages
 
-    # 1. Stream First Response
-    full_response_1 = ""
+    # 1. Stream Response
     for chunk in query_ollama_stream(full_messages, current_model):
-        full_response_1 += chunk
         yield chunk
-
-    # 2. Check for Search Command
-    if request.web_search:
-        cleaned_1 = clean_think_tags(full_response_1)
-        search_match = re.search(r'SEARCH:\s*(.+?)(?:\n|$)', cleaned_1, re.IGNORECASE)
-        
-        if search_match:
-            query = search_match.group(1).strip()
-            yield f"\n\n🔍 **Searching for:** *{query}*...\n\n"
-            search_results = perform_web_search(query)
-            
-            # Construct 2nd turn messages
-            # We treat the first response (SEARCH: ...) as assistant output
-            # Then we add a tool output or system message with results
-            # Then ask model to answer.
-            
-            # Message history for turn 2:
-            # 1. System
-            # 2. History
-            # 3. User (Last)
-            # 4. Assistant (SEARCH: query)
-            # 5. System (Results)
-            
-            messages_turn_2 = full_messages[:] # Copy
-            messages_turn_2.append({"role": "assistant", "content": full_response_1})
-            messages_turn_2.append({"role": "user", "content": f"Search Results: {search_results}\n\nAnswer the user query using these results."})
-            
-            yield "\n\n---\n\n"
-            
-            for chunk in query_ollama_stream(messages_turn_2, current_model):
-                yield chunk
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
