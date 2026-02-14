@@ -1,0 +1,48 @@
+# System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node Modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build Artifacts
+dist/
+build/
+release/
+*.app/
+*.dmg
+*.zip
+GIREI-darwin-arm64/
+GIREI-darwin-x64/
+GIREI-mas-x64/
+
+# Logs
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
+# Local Configuration & Data
+.env
+.env.local
+chat_history.json
+config.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary Files
+tmp/
+temp/

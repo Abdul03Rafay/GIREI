@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepseek Chat</title>
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- MathJax Config -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            },
+            startup: {
+                typeset: false // We will manually typeset
+            }
+        };
+    </script>
+    <!-- MathJax JS -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <div id="settings-tab" class="settings-tab">
+            <div class="settings-content">
+                <div class="settings-header-row">
+                    <h2 class="settings-title">Settings</h2>
+                    <!-- Close button removed -->
+                </div>
+
+                <!-- Group 1: Model & Stats -->
+                <div class="settings-group">
+                    <div class="setting-row">
+                        <label>Current Model</label>
+                        <span id="settings-model-name" class="setting-value">Loading...</span>
+                    </div>
+                    <div class="setting-row">
+                        <label>System Stats</label>
+                        <small id="mem-stats" class="stats-text">Loading...</small>
+                    </div>
+                </div>
+
+                <!-- Group 2: Chat Preferences -->
+                <h3 class="group-header">Preferences</h3>
+                <div class="settings-group">
+                    <!-- Web Search -->
+                    <div class="setting-row">
+                        <label>Web Search</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="web-search-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <!-- Menu Bar -->
+                    <div class="setting-row">
+                        <label>Show in Menu Bar</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="menubar-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Group 4: Downloads -->
+                <h3 class="group-header">Available Models</h3>
+                <div class="settings-group no-padding">
+                    <div id="model-downloader" class="model-downloader">
+                        <!-- Injected list -->
+                    </div>
+                </div>
+                <div id="download-status" class="download-status hidden"></div>
+
+            </div>
+
+        </div>
+        <header class="chat-header">
+            <div class="window-controls">
+                <button id="min-btn" class="control-btn" title="Minimize">—</button>
+                <button id="close-btn" class="control-btn" title="Close">×</button>
+            </div>
+            <div class="header-content">
+                <div class="model-selector-container">
+                    <h1 id="theme-toggle-text" class="model-name" title="Click to switch model">DeepSeek | R1</h1>
+                    <div id="model-dropdown" class="model-dropdown hidden">
+                        <!-- Models will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="chat-history" id="chat-history">
+            <!-- Messages will appear here -->
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="message-input" placeholder="Message..." rows="1"></textarea>
+                <button id="send-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Dependencies Fallback (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+
+    <script src="renderer.js"></script>
+</body>
+
+</html>
