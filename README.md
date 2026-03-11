@@ -4,9 +4,6 @@ A minimalist, transparent chat interface for local LLMs, designed for elite prod
 
 <img width="1504" height="1325" alt="GIREI Interface" src="https://github.com/user-attachments/assets/bea35de6-8d53-4ed7-81e5-e0564ce3fe22" />
 
-<img width="995" height="767" alt="Screenshot 2026-03-11 at 3 29 11 PM" src="https://github.com/user-attachments/assets/553f98fc-eec8-4e49-9043-ffd9273cef22" />
-
-
 ## Philosophy: Sovereign Intelligence
 
 GIREI is built on the belief that **Intelligence should be Sovereign**. In a world of centralized, data-harvesting AI, GIREI provides a localized alternative that respects your intellectual property and operates with zero latency. It is not just a tool; it is a private reasoning engine that lives where you build.
