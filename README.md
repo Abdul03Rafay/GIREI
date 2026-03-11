@@ -4,11 +4,11 @@ A minimalist, transparent chat interface for local LLMs, designed for elite prod
 
 <img width="1504" height="1325" alt="GIREI Interface" src="https://github.com/user-attachments/assets/bea35de6-8d53-4ed7-81e5-e0564ce3fe22" />
 
-## 🪐 Philosophy: Sovereign Intelligence
+## Philosophy: Sovereign Intelligence
 
 GIREI is built on the belief that **Intelligence should be Sovereign**. In a world of centralized, data-harvesting AI, GIREI provides a localized alternative that respects your intellectual property and operates with zero latency. It is not just a tool; it is a private reasoning engine that lives where you build.
 
-## 🚀 Key Features
+## Key Features
 
 - **Minimalist Glassmorphism**: A sleek, transparent UI built with Electron that stays out of your way until summoned with `Option + Space`.
 - **Local-First Inference**: Powered by **Deepseek R1** via Ollama. No data ever leaves your machine.
@@ -16,7 +16,7 @@ GIREI is built on the belief that **Intelligence should be Sovereign**. In a wor
 - **Deep Technical Support**: Native **LaTeX** rendering for mathematics and high-fidelity code highlighting via Highlight.js.
 - **Resource Intelligence**: Real-time monitoring of system memory and Ollama VRAM usage to ensure optimal machine performance.
 
-## 🛠 Architecture
+## Architecture
 
 GIREI leverages a multi-process architecture for stability and performance:
 
@@ -24,7 +24,7 @@ GIREI leverages a multi-process architecture for stability and performance:
 2. **Backend (FastAPI)**: A lightweight Python transition layer that orchestrates model interactions, file system access, and system telemetry.
 3. **Inference Engine (Ollama)**: Manages local model deployment and high-performance inference.
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
@@ -52,13 +52,13 @@ GIREI leverages a multi-process architecture for stability and performance:
    ollama pull deepseek-r1:7b
    ```
 
-## ⌨️ Usage
+## Usage
 
 - **Launch**: Run `npm start` to initialize both the Electron frontend and the FastAPI backend.
 - **Toggle Home**: `Option + Space` (Command Palette style).
 - **New Line**: `Cmd + Enter`.
 - **Context Handling**: Use the built-in file attachment logic to feed project files directly to the model.
 
-## 🛡 License
+## License
 
 ISC — Built with passion for the sovereign builder.
